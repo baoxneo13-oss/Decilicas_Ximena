@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delicias de Ximena — Sistema de Gestión</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --rosa:       #E8A0A0;
+    --rosa-dark:  #C97070;
+    --rosa-light: #F5D5D5;
+    --crema:      #FDF6EE;
+    --crema-dark: #F0E4D4;
+    --cafe:       #6B4226;
+    --cafe-light: #9B6B4A;
+    --verde:      #7BAE7F;
+    --verde-light:#D4EDDA;
+    --amarillo:   #F5C842;
+    --amarillo-light:#FFF8DC;
+    --texto:      #2D1B0E;
+    --texto-suave:#7A5C48;
+    --borde:      #E8D5C4;
+    --blanco:     #FFFFFF;
+    --sombra:     0 2px 12px rgba(107,66,38,0.10);
+    --sombra-hover: 0 6px 24px rgba(107,66,38,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--crema);
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--cafe);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 28px 20px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .brand-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--crema);
+    line-height: 1.3;
+  }
+
+  .brand-sub {
+    font-size: 10px;
+    color: var(--rosa-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .sidebar-nav {
+    padding: 16px 12px;
+    flex: 1;
+  }
+
+  .nav-section-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 12px 8px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+    color: rgba(255,255,255,0.65);
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.10);
+    color: var(--crema);
+  }
+
+  .nav-item.active {
+    background: var(--rosa-dark);
+    color: var(--blanco);
+  }
+
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .user-info { display: flex; align-items: center; gap: 10px; }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--rosa-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: white; font-weight: 600;
+  }
+  .user-name { font-size: 12px; color: var(--crema); font-weight: 500; }
+  .user-role { font-size: 10px; color: rgba(255,255,255,0.45); }
+
+  
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--blanco);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--borde);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--cafe);
+  }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.18s;
+    border: none; font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--rosa-dark); color: white;
+  }
+  .btn-primary:hover { background: var(--cafe); transform: translateY(-1px); box-shadow: var(--sombra-hover); }
+
+  .btn-outline {
+    background: transparent; color: var(--cafe);
+    border: 1.5px solid var(--borde);
+  }
+  .btn-outline:hover { border-color: var(--rosa-dark); color: var(--rosa-dark); background: var(--rosa-light); }
+
+  .btn-danger {
+    background: #FDECEA; color: #C0392B; border: 1.5px solid #F5C6C2;
+  }
+  .btn-danger:hover { background: #C0392B; color: white; }
+
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  .content { padding: 32px; flex: 1; }
+
+  
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--blanco);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borde);
+    transition: box-shadow 0.2s;
+  }
+  .stat-card:hover { box-shadow: var(--sombra-hover); }
+
+  .stat-label {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--texto-suave); font-weight: 600; margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700; color: var(--cafe);
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 12px; color: var(--texto-suave); margin-top: 6px;
+  }
+
+  .stat-icon {
+    font-size: 28px; float: right; margin-top: -36px;
+    opacity: 0.25;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+  }
+
+  .card {
+    background: var(--blanco);
+    border-radius: 14px;
+    border: 1px solid var(--borde);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--borde);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 600; color: var(--cafe);
+  }
+
+  .card-body { padding: 0; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+    font-weight: 600;
+    background: var(--crema);
+    border-bottom: 1px solid var(--borde);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--crema-dark);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  tbody tr:hover { background: var(--crema); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td { padding: 12px 16px; vertical-align: middle; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-pendiente { background: var(--amarillo-light); color: #B8860B; }
+  .badge-confirmado { background: #E3F0FF; color: #1565C0; }
+  .badge-entregado  { background: var(--verde-light); color: #2E7D32; }
+  .badge-cancelado  { background: #FDECEA; color: #C62828; }
+  .badge-activo     { background: var(--verde-light); color: #2E7D32; }
+  .badge-inactivo   { background: var(--crema-dark); color: var(--texto-suave); }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+
+  label {
+    font-size: 12px; font-weight: 600; color: var(--cafe);
+    letter-spacing: 0.3px;
+  }
+
+  input, select, textarea {
+    padding: 10px 13px;
+    border: 1.5px solid var(--borde);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    color: var(--texto);
+    background: var(--blanco);
+    transition: border-color 0.18s, box-shadow 0.18s;
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--rosa-dark);
+    box-shadow: 0 0 0 3px rgba(201,112,112,0.12);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .form-hint { font-size: 11px; color: var(--texto-suave); }
+
+  
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,27,14,0.45);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--blanco);
+    border-radius: 16px;
+    width: 560px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(107,66,38,0.25);
+    animation: slideUp 0.22s ease;
+  }
+
+  .modal-lg { width: 680px; }
+
+  @keyframes slideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .modal-header {
+    padding: 22px 26px 16px;
+    border-bottom: 1px solid var(--borde);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 600; color: var(--cafe);
+  }
+
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: none; background: var(--crema-dark);
+    cursor: pointer; font-size: 16px; color: var(--texto-suave);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: var(--rosa-light); color: var(--rosa-dark); }
+
+  .modal-body { padding: 22px 26px; }
+
+  .modal-footer {
+    padding: 16px 26px 22px;
+    display: flex; justify-content: flex-end; gap: 10px;
+    border-top: 1px solid var(--borde);
+  }
+
+  
+  .toast-container {
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .toast {
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    animation: toastIn 0.25s ease;
+    display: flex; align-items: center; gap: 8px;
+    max-width: 320px;
+  }
+
+  @keyframes toastIn {
+    from { transform: translateX(40px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+
+  .toast-success { background: #1B5E20; color: white; }
+  .toast-error   { background: #B71C1C; color: white; }
+  .toast-info    { background: var(--cafe); color: white; }
+
+  
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
+  }
+
+  .search-input {
+    padding: 9px 13px 9px 36px;
+    border: 1.5px solid var(--borde);
+    border-radius: 8px; font-size: 13px;
+    background: var(--blanco) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239B6B4A' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;
+    outline: none; width: 220px;
+    transition: border-color 0.18s;
+  }
+  .search-input:focus { border-color: var(--rosa-dark); }
+
+  
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--texto-suave);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state p { font-size: 14px; }
+
+  
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .detail-item { background: var(--crema); border-radius: 8px; padding: 12px 14px; }
+  .detail-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--texto-suave); font-weight: 600; margin-bottom: 3px; }
+  .detail-value { font-size: 13.5px; font-weight: 500; color: var(--texto); }
+
+  
+  .recent-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--crema-dark);
+  }
+  .recent-item:last-child { border-bottom: none; }
+  .recent-name { font-size: 13.5px; font-weight: 500; }
+  .recent-sub { font-size: 11.5px; color: var(--texto-suave); }
+  .recent-amount { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--cafe); }
+
+  
+  .section-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600; color: var(--cafe);
+    margin-bottom: 2px;
+  }
+  .section-sub { font-size: 13px; color: var(--texto-suave); }
+
+  
+  .action-btns { display: flex; gap: 6px; }
+
+  
+  .progress-bar {
+    height: 6px; background: var(--crema-dark); border-radius: 3px; overflow: hidden; margin-top: 8px;
+  }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+</style>
+</head>
+<body>
+
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-icon">🧁</span>
+    <div class="brand-name">Delicias de Ximena</div>
+    <div class="brand-sub">Sistema de Gestión</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Principal</div>
+    <button class="nav-item active" onclick="showPanel('dashboard', this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="showPanel('pedidos', this)">
+      <span class="nav-icon">📋</span> Pedidos
+    </button>
+    <button class="nav-item" onclick="showPanel('clientes', this)">
+      <span class="nav-icon">👥</span> Clientes
+    </button>
+    <div class="nav-section-label" style="margin-top:8px;">Próximamente</div>
+    <button class="nav-item" style="opacity:0.45;cursor:not-allowed;">
+      <span class="nav-icon">📦</span> Inventario
+    </button>
+    <button class="nav-item" style="opacity:0.45;cursor:not-allowed;">
+      <span class="nav-icon">💰</span> Finanzas
+    </button>
+    <button class="nav-item" style="opacity:0.45;cursor:not-allowed;">
+      <span class="nav-icon">🤖</span> Atención Digital
+    </button>
+    <button class="nav-item" style="opacity:0.45;cursor:not-allowed;">
+      <span class="nav-icon">📈</span> Reportes
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">P</div>
+      <div>
+        <div class="user-name">Pamela Saavedra</div>
+        <div class="user-role">Administradora</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+
+<main class="main">
+
+  
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--texto-suave);" id="fecha-hoy"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    
+    <div class="panel active" id="panel-dashboard">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Pedidos este mes</div>
+          <div class="stat-value" id="stat-total-pedidos">0</div>
+          <div class="stat-sub">Total registrados</div>
+          <div class="stat-icon">📋</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--rosa-dark);width:0%" id="prog-pedidos"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pendientes de entrega</div>
+          <div class="stat-value" id="stat-pendientes">0</div>
+          <div class="stat-sub">Requieren atención</div>
+          <div class="stat-icon">⏰</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--amarillo);width:0%" id="prog-pendientes"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Clientes registrados</div>
+          <div class="stat-value" id="stat-clientes">0</div>
+          <div class="stat-sub">En el sistema</div>
+          <div class="stat-icon">👥</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--verde);width:0%" id="prog-clientes"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ingresos estimados</div>
+          <div class="stat-value" id="stat-ingresos">$0</div>
+          <div class="stat-sub">Pedidos confirmados</div>
+          <div class="stat-icon">💵</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:var(--cafe);width:0%" id="prog-ingresos"></div></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Últimos pedidos</div>
+            <button class="btn btn-outline btn-sm" onclick="showPanel('pedidos', document.querySelectorAll('.nav-item')[1])">Ver todos</button>
+          </div>
+          <div class="card-body">
+            <div id="dashboard-pedidos-list">
+              <div class="empty-state"><div class="empty-icon">📋</div><p>Aún no hay pedidos registrados.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Pedidos por estado</div>
+          </div>
+          <div class="card-body" style="padding:20px;">
+            <div id="estado-resumen">
+              <div class="empty-state" style="padding:30px 20px;"><div class="empty-icon" style="font-size:32px;">📊</div><p>Sin datos aún</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="panel" id="panel-pedidos">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Pedidos</div>
+          <div class="section-sub">Gestiona todos los pedidos del negocio</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalPedido()">
+          ＋ Nuevo pedido
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Buscar pedido..." oninput="filtrarPedidos(this.value)" id="search-pedidos">
+        <select style="padding:9px 13px;border:1.5px solid var(--borde);border-radius:8px;font-size:13px;outline:none;background:white;" onchange="filtrarPedidosPorEstado(this.value)">
+          <option value="">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Entregado">Entregado</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>N° Pedido</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Fecha entrega</th>
+                <th>Anticipó</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-pedidos">
+              <tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div><p>No hay pedidos. ¡Registra el primero!</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="panel" id="panel-clientes">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Clientes</div>
+          <div class="section-sub">Registro completo de clientes del negocio</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModalCliente()">
+          ＋ Nuevo cliente
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Buscar cliente..." oninput="filtrarClientes(this.value)" id="search-clientes">
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Dirección</th>
+                <th>Total pedidos</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-clientes">
+              <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><p>No hay clientes registrados aún.</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+
+<div class="modal-overlay" id="modal-pedido">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-pedido-title">Nuevo Pedido</div>
+      <button class="modal-close" onclick="closeModal('modal-pedido')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cliente *</label>
+            <select id="ped-cliente" required>
+              <option value="">Seleccionar cliente...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha de entrega *</label>
+            <input type="date" id="ped-fecha" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Producto / Descripción del pedido *</label>
+          <textarea id="ped-producto" placeholder="Ej: Torta de chocolate 3 pisos para cumpleaños, 20 porciones. Decoración: flores rosas con nombre 'María'." required></textarea>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>Tipo de evento</label>
+            <select id="ped-evento">
+              <option value="">Seleccionar...</option>
+              <option>Cumpleaños</option>
+              <option>Matrimonio</option>
+              <option>Bautizo</option>
+              <option>Graduación</option>
+              <option>Corporativo</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Anticipo recibido (CLP)</label>
+            <input type="number" id="ped-anticipo" placeholder="0" min="0">
+          </div>
+          <div class="form-group">
+            <label>Total del pedido (CLP) *</label>
+            <input type="number" id="ped-total" placeholder="0" min="0" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="ped-estado">
+              <option value="Pendiente">Pendiente</option>
+              <option value="Confirmado">Confirmado</option>
+              <option value="Entregado">Entregado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hora de retiro</label>
+            <input type="time" id="ped-hora">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Observaciones adicionales</label>
+          <textarea id="ped-obs" placeholder="Alergias, preferencias, instrucciones de entrega..." style="min-height:60px;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-pedido')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarPedido()">Guardar pedido</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-cliente">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-cliente-title">Nuevo Cliente</div>
+      <button class="modal-close" onclick="closeModal('modal-cliente')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre completo *</label>
+            <input type="text" id="cli-nombre" placeholder="Ej: María González" required>
+          </div>
+          <div class="form-group">
+            <label>Teléfono *</label>
+            <input type="tel" id="cli-telefono" placeholder="+56 9 1234 5678" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" id="cli-email" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" id="cli-direccion" placeholder="Calle, N°, Calama">
+        </div>
+        <div class="form-group">
+          <label>Notas del cliente</label>
+          <textarea id="cli-notas" placeholder="Preferencias, alergias, forma de pago habitual..." style="min-height:60px;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-cliente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCliente()">Guardar cliente</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-detalle-pedido">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="detalle-titulo">Detalle del Pedido</div>
+      <button class="modal-close" onclick="closeModal('modal-detalle-pedido')">✕</button>
+    </div>
+    <div class="modal-body" id="detalle-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-detalle-pedido')">Cerrar</button>
+      <button class="btn btn-primary" id="detalle-editar-btn">Editar pedido</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+
+
+
+let state = {
+  pedidos: [],
+  clientes: [],
+  nextPedidoId: 1,
+  nextClienteId: 1,
+  editingPedidoId: null,
+  editingClienteId: null,
+};
+
+
+function seedData() {
+  const clientes = [
+    { id: 1, nombre: 'María González', telefono: '+56 9 8712 3456', email: 'maria.gonzalez@gmail.com', direccion: 'Av. El Cobre 1234, Calama', notas: 'Prefiere pagar en efectivo. Alérgica a nueces.', estado: 'Activo' },
+    { id: 2, nombre: 'Carlos Mendoza', telefono: '+56 9 7634 5678', email: 'cmendoza@empresa.cl', direccion: 'Los Aromos 456, Calama', notas: 'Siempre anticipa el 50%. Pide tortas para eventos corporativos.', estado: 'Activo' },
+    { id: 3, nombre: 'Ana Pérez', telefono: '+56 9 6523 4567', email: '', direccion: '', notas: 'Cliente frecuente de cumpleaños.', estado: 'Activo' },
+  ];
+  clientes.forEach(c => state.clientes.push(c));
+  state.nextClienteId = 4;
+
+  const pedidos = [
+    { id: 1, clienteId: 1, clienteNombre: 'María González', producto: 'Torta de chocolate 3 pisos, 20 porciones. Decoración flores rosas con nombre "Sofía".', evento: 'Cumpleaños', fecha: '2026-07-05', hora: '12:00', anticipo: 15000, total: 45000, estado: 'Confirmado', obs: 'Sin nueces en la decoración.' },
+    { id: 2, clienteId: 2, clienteNombre: 'Carlos Mendoza', producto: '5 docenas de cupcakes variados para evento corporativo. Logo de la empresa en cada uno.', evento: 'Corporativo', fecha: '2026-07-08', hora: '09:00', anticipo: 30000, total: 60000, estado: 'Pendiente', obs: '' },
+    { id: 3, clienteId: 3, clienteNombre: 'Ana Pérez', producto: 'Torta selva negra 2 pisos para cumpleaños de 15 años.', evento: 'Cumpleaños', fecha: '2026-06-28', hora: '11:00', anticipo: 20000, total: 38000, estado: 'Entregado', obs: 'Entregada sin problemas.' },
+  ];
+  pedidos.forEach(p => state.pedidos.push(p));
+  state.nextPedidoId = 4;
+}
+
+
+
+
+function showPanel(name, navEl) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  const titles = { dashboard: 'Dashboard', pedidos: 'Pedidos', clientes: 'Clientes' };
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'pedidos') renderPedidos();
+  if (name === 'clientes') renderClientes();
+}
+
+
+
+
+function renderDashboard() {
+  const total = state.pedidos.length;
+  const pendientes = state.pedidos.filter(p => p.estado === 'Pendiente' || p.estado === 'Confirmado').length;
+  const clientes = state.clientes.length;
+  const ingresos = state.pedidos.filter(p => p.estado !== 'Cancelado').reduce((s, p) => s + (p.total || 0), 0);
+
+  document.getElementById('stat-total-pedidos').textContent = total;
+  document.getElementById('stat-pendientes').textContent = pendientes;
+  document.getElementById('stat-clientes').textContent = clientes;
+  document.getElementById('stat-ingresos').textContent = '$' + ingresos.toLocaleString('es-CL');
+
+  document.getElementById('prog-pedidos').style.width = Math.min(total * 10, 100) + '%';
+  document.getElementById('prog-pendientes').style.width = Math.min(pendientes * 15, 100) + '%';
+  document.getElementById('prog-clientes').style.width = Math.min(clientes * 15, 100) + '%';
+  document.getElementById('prog-ingresos').style.width = Math.min(ingresos / 2000, 100) + '%';
+
+  
+  const recent = [...state.pedidos].reverse().slice(0, 5);
+  const listEl = document.getElementById('dashboard-pedidos-list');
+  if (recent.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Aún no hay pedidos registrados.</p></div>';
+  } else {
+    listEl.innerHTML = recent.map(p => `
+      <div class="recent-item">
+        <div>
+          <div class="recent-name">${p.clienteNombre}</div>
+          <div class="recent-sub">${p.evento || 'Sin tipo'} · ${formatFecha(p.fecha)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="badge badge-${p.estado.toLowerCase()}">${p.estado}</span>
+          <div class="recent-amount">$${(p.total||0).toLocaleString('es-CL')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  
+  const estados = ['Pendiente','Confirmado','Entregado','Cancelado'];
+  const colores = { Pendiente: 'var(--amarillo)', Confirmado: '#1565C0', Entregado: 'var(--verde)', Cancelado: '#C62828' };
+  const estadoEl = document.getElementById('estado-resumen');
+  const conteos = estados.map(e => ({ estado: e, count: state.pedidos.filter(p => p.estado === e).length }));
+  const maxC = Math.max(...conteos.map(c => c.count), 1);
+  estadoEl.innerHTML = conteos.map(c => `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:13px;font-weight:500;">${c.estado}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--cafe);">${c.count}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${colores[c.estado]};width:${(c.count/maxC)*100}%"></div></div>
+    </div>
+  `).join('');
+}
+
+
+
+
+function renderPedidos(filtro = '', estadoFiltro = '') {
+  const tbody = document.getElementById('tabla-pedidos');
+  let lista = state.pedidos.filter(p => {
+    const matchText = !filtro || p.clienteNombre.toLowerCase().includes(filtro.toLowerCase()) || p.producto.toLowerCase().includes(filtro.toLowerCase());
+    const matchEstado = !estadoFiltro || p.estado === estadoFiltro;
+    return matchText && matchEstado;
+  });
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div><p>${filtro || estadoFiltro ? 'Sin resultados para la búsqueda.' : 'No hay pedidos. ¡Registra el primero!'}</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(p => {
+    const saldo = (p.total || 0) - (p.anticipo || 0);
+    return `
+      <tr onclick="verDetallePedido(${p.id})">
+        <td><strong style="color:var(--cafe);">#${String(p.id).padStart(3,'0')}</strong></td>
+        <td>${p.clienteNombre}</td>
+        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.producto}</td>
+        <td>${formatFecha(p.fecha)}${p.hora ? ' · ' + p.hora : ''}</td>
+        <td>$${(p.anticipo||0).toLocaleString('es-CL')}</td>
+        <td><strong>$${(p.total||0).toLocaleString('es-CL')}</strong><br><span style="font-size:11px;color:var(--texto-suave);">Saldo: $${saldo.toLocaleString('es-CL')}</span></td>
+        <td><span class="badge badge-${p.estado.toLowerCase()}">${p.estado}</span></td>
+        <td onclick="event.stopPropagation()">
+          <div class="action-btns">
+            <button class="btn btn-outline btn-sm" onclick="editarPedido(${p.id})">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarPedido(${p.id})">✕</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function filtrarPedidos(v) { renderPedidos(v); }
+function filtrarPedidosPorEstado(v) { renderPedidos(document.getElementById('search-pedidos').value, v); }
+
+function openModalPedido(id = null) {
+  state.editingPedidoId = id;
+  document.getElementById('modal-pedido-title').textContent = id ? 'Editar Pedido' : 'Nuevo Pedido';
+
+  
+  const sel = document.getElementById('ped-cliente');
+  sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+    state.clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+
+  
+  const campos = ['ped-cliente','ped-fecha','ped-producto','ped-evento','ped-anticipo','ped-total','ped-estado','ped-hora','ped-obs'];
+  if (id) {
+    const p = state.pedidos.find(x => x.id === id);
+    document.getElementById('ped-cliente').value = p.clienteId;
+    document.getElementById('ped-fecha').value = p.fecha;
+    document.getElementById('ped-producto').value = p.producto;
+    document.getElementById('ped-evento').value = p.evento || '';
+    document.getElementById('ped-anticipo').value = p.anticipo || '';
+    document.getElementById('ped-total').value = p.total || '';
+    document.getElementById('ped-estado').value = p.estado;
+    document.getElementById('ped-hora').value = p.hora || '';
+    document.getElementById('ped-obs').value = p.obs || '';
+  } else {
+    campos.forEach(c => { if (c !== 'ped-estado' && c !== 'ped-cliente') document.getElementById(c).value = ''; });
+    document.getElementById('ped-estado').value = 'Pendiente';
+  }
+
+  document.getElementById('modal-pedido').classList.add('open');
+}
+
+function guardarPedido() {
+  const cliId = parseInt(document.getElementById('ped-cliente').value);
+  const fecha  = document.getElementById('ped-fecha').value;
+  const prod   = document.getElementById('ped-producto').value.trim();
+  const total  = parseFloat(document.getElementById('ped-total').value) || 0;
+
+  if (!cliId) { toast('Selecciona un cliente', 'error'); return; }
+  if (!fecha)  { toast('Ingresa la fecha de entrega', 'error'); return; }
+  if (!prod)   { toast('Describe el pedido', 'error'); return; }
+  if (total <= 0) { toast('Ingresa el monto total', 'error'); return; }
+
+  const cli = state.clientes.find(c => c.id === cliId);
+
+  const data = {
+    clienteId: cliId,
+    clienteNombre: cli.nombre,
+    producto: prod,
+    evento: document.getElementById('ped-evento').value,
+    fecha, hora: document.getElementById('ped-hora').value,
+    anticipo: parseFloat(document.getElementById('ped-anticipo').value) || 0,
+    total,
+    estado: document.getElementById('ped-estado').value,
+    obs: document.getElementById('ped-obs').value.trim(),
+  };
+
+  if (state.editingPedidoId) {
+    const idx = state.pedidos.findIndex(p => p.id === state.editingPedidoId);
+    state.pedidos[idx] = { ...state.pedidos[idx], ...data };
+    toast('Pedido actualizado correctamente ✓', 'success');
+  } else {
+    state.pedidos.push({ id: state.nextPedidoId++, ...data });
+    toast('Pedido registrado correctamente ✓', 'success');
+  }
+
+  closeModal('modal-pedido');
+  renderPedidos();
+  renderDashboard();
+}
+
+function editarPedido(id) { openModalPedido(id); }
+
+function eliminarPedido(id) {
+  if (!confirm('¿Eliminar este pedido? Esta acción no se puede deshacer.')) return;
+  state.pedidos = state.pedidos.filter(p => p.id !== id);
+  renderPedidos();
+  renderDashboard();
+  toast('Pedido eliminado', 'info');
+}
+
+function verDetallePedido(id) {
+  const p = state.pedidos.find(x => x.id === id);
+  if (!p) return;
+  const saldo = (p.total || 0) - (p.anticipo || 0);
+  document.getElementById('detalle-titulo').textContent = `Pedido #${String(p.id).padStart(3,'0')}`;
+  document.getElementById('detalle-body').innerHTML = `
+    <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <span class="badge badge-${p.estado.toLowerCase()}" style="font-size:13px;padding:5px 14px;">${p.estado}</span>
+      ${p.evento ? `<span style="font-size:13px;color:var(--texto-suave);">${p.evento}</span>` : ''}
+    </div>
+    <div class="detail-grid" style="margin-bottom:14px;">
+      <div class="detail-item"><div class="detail-label">Cliente</div><div class="detail-value">${p.clienteNombre}</div></div>
+      <div class="detail-item"><div class="detail-label">Fecha de entrega</div><div class="detail-value">${formatFecha(p.fecha)}${p.hora ? ' a las ' + p.hora : ''}</div></div>
+      <div class="detail-item"><div class="detail-label">Anticipo recibido</div><div class="detail-value">$${(p.anticipo||0).toLocaleString('es-CL')}</div></div>
+      <div class="detail-item"><div class="detail-label">Total del pedido</div><div class="detail-value" style="font-family:'Playfair Display',serif;font-size:17px;color:var(--cafe);">$${(p.total||0).toLocaleString('es-CL')}</div></div>
+      <div class="detail-item" style="background:${saldo>0?'var(--amarillo-light)':'var(--verde-light)'};">
+        <div class="detail-label">Saldo pendiente</div>
+        <div class="detail-value" style="color:${saldo>0?'#B8860B':'#2E7D32'};">$${saldo.toLocaleString('es-CL')}</div>
+      </div>
+    </div>
+    <div style="background:var(--crema);border-radius:8px;padding:14px;margin-bottom:12px;">
+      <div class="detail-label" style="margin-bottom:6px;">Descripción del pedido</div>
+      <div style="font-size:13.5px;line-height:1.6;">${p.producto}</div>
+    </div>
+    ${p.obs ? `<div style="background:#FFF8DC;border-radius:8px;padding:12px;">
+      <div class="detail-label" style="margin-bottom:4px;">Observaciones</div>
+      <div style="font-size:13px;">${p.obs}</div>
+    </div>` : ''}
+  `;
+  document.getElementById('detalle-editar-btn').onclick = () => { closeModal('modal-detalle-pedido'); openModalPedido(id); };
+  document.getElementById('modal-detalle-pedido').classList.add('open');
+}
+
+
+// CLIENTES
+
+function renderClientes(filtro = '') {
+  const tbody = document.getElementById('tabla-clientes');
+  let lista = state.clientes.filter(c =>
+    !filtro || c.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+    (c.telefono && c.telefono.includes(filtro)) ||
+    (c.email && c.email.toLowerCase().includes(filtro.toLowerCase()))
+  );
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><p>${filtro ? 'Sin resultados.' : 'No hay clientes registrados aún.'}</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(c => {
+    const totalPedidos = state.pedidos.filter(p => p.clienteId === c.id).length;
+    return `
+      <tr>
+        <td><strong>${c.nombre}</strong></td>
+        <td>${c.telefono || '—'}</td>
+        <td>${c.email || '—'}</td>
+        <td>${c.direccion || '—'}</td>
+        <td style="text-align:center;"><strong style="color:var(--cafe);">${totalPedidos}</strong></td>
+        <td><span class="badge badge-${(c.estado||'Activo').toLowerCase()}">${c.estado || 'Activo'}</span></td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-outline btn-sm" onclick="editarCliente(${c.id})">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarCliente(${c.id})">✕</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function filtrarClientes(v) { renderClientes(v); }
+
+function openModalCliente(id = null) {
+  state.editingClienteId = id;
+  document.getElementById('modal-cliente-title').textContent = id ? 'Editar Cliente' : 'Nuevo Cliente';
+  if (id) {
+    const c = state.clientes.find(x => x.id === id);
+    document.getElementById('cli-nombre').value = c.nombre;
+    document.getElementById('cli-telefono').value = c.telefono || '';
+    document.getElementById('cli-email').value = c.email || '';
+    document.getElementById('cli-direccion').value = c.direccion || '';
+    document.getElementById('cli-notas').value = c.notas || '';
+  } else {
+    ['cli-nombre','cli-telefono','cli-email','cli-direccion','cli-notas'].forEach(id => document.getElementById(id).value = '');
+  }
+  document.getElementById('modal-cliente').classList.add('open');
+}
+
+function guardarCliente() {
+  const nombre = document.getElementById('cli-nombre').value.trim();
+  const tel    = document.getElementById('cli-telefono').value.trim();
+  if (!nombre) { toast('El nombre es obligatorio', 'error'); return; }
+  if (!tel)    { toast('El teléfono es obligatorio', 'error'); return; }
+
+  const data = {
+    nombre, telefono: tel,
+    email: document.getElementById('cli-email').value.trim(),
+    direccion: document.getElementById('cli-direccion').value.trim(),
+    notas: document.getElementById('cli-notas').value.trim(),
+    estado: 'Activo',
+  };
+
+  if (state.editingClienteId) {
+    const idx = state.clientes.findIndex(c => c.id === state.editingClienteId);
+    state.clientes[idx] = { ...state.clientes[idx], ...data };
+    toast('Cliente actualizado correctamente ✓', 'success');
+  } else {
+    state.clientes.push({ id: state.nextClienteId++, ...data });
+    toast('Cliente registrado correctamente ✓', 'success');
+  }
+
+  closeModal('modal-cliente');
+  renderClientes();
+}
+
+function editarCliente(id) { openModalCliente(id); }
+
+function eliminarCliente(id) {
+  const pedidosAsoc = state.pedidos.filter(p => p.clienteId === id).length;
+  if (pedidosAsoc > 0) {
+    toast(`Este cliente tiene ${pedidosAsoc} pedido(s) asociado(s). Elimina los pedidos primero.`, 'error');
+    return;
+  }
+  if (!confirm('¿Eliminar este cliente?')) return;
+  state.clientes = state.clientes.filter(c => c.id !== id);
+  renderClientes();
+  toast('Cliente eliminado', 'info');
+}
+
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  el.innerHTML = `<span>${icons[type]}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function formatFecha(str) {
+  if (!str) return '—';
+  const [y, m, d] = str.split('-');
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+}
+
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+
+const now = new Date();
+document.getElementById('fecha-hoy').textContent = now.toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+
+seedData();
+renderDashboard();
+</script>
+</body>
+</html>
